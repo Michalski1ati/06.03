@@ -1,0 +1,504 @@
+function popup(url, w, h) {
+    var Win = window.open(url, "displayWindow", 'width=' + w + ',height=' + h + ',resizable=0,scrollbars=yes,menubar=no');
+}
+
+function redirect(url) {
+
+
+    if (/Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor) === true) {
+        return true;
+    }
+    document.location.href = url;
+}
+
+function disableEnterKey(e)
+{
+    var key;
+    if (window.event)
+        key = window.event.keyCode;     //IE
+    else
+        key = e.which;     //firefox
+    if (key == 13)
+        return false;
+    else
+        return true;
+}
+
+function reset(arr) {
+    //  discuss at: http://phpjs.org/functions/reset/
+    // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+    // bugfixed by: Legaev Andrey
+    //  revised by: Brett Zamir (http://brett-zamir.me)
+    //        note: Uses global: php_js to store the array pointer
+    //   example 1: reset({0: 'Kevin', 1: 'van', 2: 'Zonneveld'});
+    //   returns 1: 'Kevin'
+
+    this.php_js = this.php_js || {};
+    this.php_js.pointers = this.php_js.pointers || [];
+    var indexOf = function (value) {
+        for (var i = 0, length = this.length; i < length; i++) {
+            if (this[i] === value) {
+                return i;
+            }
+        }
+        return -1;
+    };
+    // END REDUNDANT
+    var pointers = this.php_js.pointers;
+    if (!pointers.indexOf) {
+        pointers.indexOf = indexOf;
+    }
+    if (pointers.indexOf(arr) === -1) {
+        pointers.push(arr, 0);
+    }
+    var arrpos = pointers.indexOf(arr);
+    if (Object.prototype.toString.call(arr) !== '[object Array]') {
+        for (var k in arr) {
+            if (pointers.indexOf(arr) === -1) {
+                pointers.push(arr, 0);
+            } else {
+                pointers[arrpos + 1] = 0;
+            }
+            return arr[k];
+        }
+        return false; // Empty
+    }
+    if (arr.length === 0) {
+        return false;
+    }
+    pointers[arrpos + 1] = 0;
+    return arr[pointers[arrpos + 1]];
+}
+/******************************************************************************/
+function sleep(milliseconds) {
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+        if ((new Date().getTime() - start) > milliseconds) {
+            break;
+        }
+    }
+}
+
+function liveReport(data) {
+    var length = data.live_report_events.length;
+    var events_id = Array();
+    for (var i = 0; i < length; i++) {
+        events_id.push(data['live_report_events'][i].id);
+        var event_old = $('#event_' + data['live_report_events'][i].id);
+        var event_new = $('<tr class="event" last_update="' + data['live_report_events'][i].last_update + '" id="event_' + data['live_report_events'][i].id + '"><td class="lminute">' + data['live_report_events'][i].minute + '\'</td><td class="licon">' + (parseInt(data['live_report_events'][i].type) !== 0 ? '<img src="/images/live_report_icons/' + data['live_report_events'][i].type + '.png" />' : '') + '</td><td class="ltext">' + data['live_report_events'][i].content + '</td></tr>');
+        if (event_old.length === 0) {
+            $('#live_report_content').prepend(event_new);
+        } else {
+            if (event_old.attr('last_update') !== event_new.attr('last_update')) {
+                event_old.replaceWith(event_new);
+            }
+        }
+    }
+    $('.event').each(function () {
+        var event = $(this);
+        var event_id = event.attr('id').replace('event_', '');
+        if (jQuery.inArray(event_id, events_id) == -1) {
+            event.remove();
+        }
+    });
+    $('#live_report_content').find('.event').sort(function (b, a) {
+        var event_a_id = $(a).attr('id').replace('event_', '');
+        var event_b_id = $(b).attr('id').replace('event_', '');
+        return event_a_id - event_b_id;
+    }).appendTo('#live_report_content');
+    $('#intro_text').remove();
+}
+
+function transmissionLiveReport(data) {
+    var length = data.transmission_live_report_events.length;
+    var events_id = Array();
+    for (var i = 0; i < length; i++) {
+        events_id.push(data['transmission_live_report_events'][i].id);
+        var event_old = $('#event_' + data['transmission_live_report_events'][i].id);
+        if (data['transmission']['discipline_id'] != 6) {
+            var event_new = $('<tr class="event" last_update="' + data['transmission_live_report_events'][i].last_update + '" id="event_' + data['transmission_live_report_events'][i].id + '"><td class="lminute">' + data['transmission_live_report_events'][i].minute + '\'</td><td class="ltext">' + data['transmission_live_report_events'][i].content + '</td></tr>');
+        } else {
+            var event_new = $('<tr class="event" last_update="' + data['transmission_live_report_events'][i].last_update + '" id="event_' + data['transmission_live_report_events'][i].id + '"><td>' + data['transmission_live_report_events'][i].content + '</td></tr>');
+        }
+        if (event_old.length === 0) {
+            $('#live_report_content').prepend(event_new);
+        } else {
+            if (event_old.attr('last_update') !== event_new.attr('last_update')) {
+                event_old.replaceWith(event_new);
+            }
+        }
+    }
+    $('.event').each(function () {
+        var event = $(this);
+        var event_id = event.attr('id').replace('event_', '');
+        if (jQuery.inArray(event_id, events_id) == -1) {
+            event.remove();
+        }
+    });
+    $('#live_report_content').find('.event').sort(function (b, a) {
+        var event_a_id = $(a).attr('id').replace('event_', '');
+        var event_b_id = $(b).attr('id').replace('event_', '');
+        return event_a_id - event_b_id;
+    }).appendTo('#live_report_content');
+    if (data.transmission_live_report.name !== $('#transmission_live_report_name').html()) {
+        $('#transmission_live_report_name').html(data.transmission_live_report.name);
+    }
+}
+
+function showUserProfilePopup(user_id, resource_id, resource_type) {
+
+    resource_id = typeof resource_id === "undefined" ? "" : resource_id;
+    resource_type = typeof resource_type === "undefined" ? "" : resource_type;
+
+    var url = "/frontend/user/ajaxUserProfilePopup/user_id/" + user_id + "/resource_id/" + resource_id + "/resource_type/" + resource_type;
+
+    var container_id = "profilepopup_" + user_id + (resource_id != "" ? "_" + resource_id : "") + (resource_type != "" ? "_" + resource_type : "");
+
+    var isLeft = $('#' + container_id).children('.profilepopup').is('.left');
+    var isLeftBottom = $('#' + container_id).children('.profilepopup').is('.left-bottom');
+    var isRightBottom = $('#' + container_id).children('.profilepopup').is('.right-bottom');
+
+    $('#' + container_id).html('\
+            <div class="profilepopup profilepopup-new' + (isLeft ? ' left' : '') + '' + (isLeftBottom ? ' left-bottom' : '') + '' + (isRightBottom ? ' right-bottom' : '') + '">\n\
+                <div class="loading"></div>\n\
+            </div>');
+
+    $('#' + container_id).show(0, function () {
+
+        if ($(this).children('.profilepopup').is(':offscreen')) {
+            $(this).children('.profilepopup').addClass('left');
+        }
+
+        if ($(this).children('.profilepopup').is(':offscreenHeight')) {
+            $(this).children('.profilepopup').addClass('left-bottom');
+        }
+
+        if ($(this).children('.profilepopup').is(':offscreenWidthLeft')) {
+            $(this).children('.profilepopup').addClass('right-bottom');
+        }
+
+        $.ajax({
+            url: url,
+            dataType: 'html',
+            type: 'GET'
+        }).success(function (data) {
+
+            $('#' + container_id).html(data);
+
+            if ($('#' + container_id).children('.profilepopup').is(':offscreen')) {
+                $('#' + container_id).children('.profilepopup').addClass('left');
+            }
+            if ($('#' + container_id).children('.profilepopup').is(':offscreenHeight')) {
+                $('#' + container_id).children('.profilepopup').addClass('left-bottom');
+            }
+            if ($('#' + container_id).children('.profilepopup').is(':offscreenWidthLeft')) {
+                $('#' + container_id).children('.profilepopup').addClass('right-bottom');
+            }
+        }).error(function () {
+            console.error('BÅ‚Ä…d przy pobieraniu danych');
+        });
+    });
+}
+
+function showPlayerProfilePopup(user_id, number) {
+
+    var url = "/soccer/person/ajaxPlayerProfilePopup/user_id/" + user_id;
+
+    var container_id = "profilepopup_" + user_id + '_' + number;
+
+    var isLeft = $('#' + container_id).children('.profilepopup').is('.left');
+    var isLeftBottom = $('#' + container_id).children('.profilepopup').is('.left-bottom');
+    var isRightBottom = $('#' + container_id).children('.profilepopup').is('.right-bottom');
+
+    $('#' + container_id).html('\
+            <div class="profilepopup profilepopup-new' + (isRightBottom ? ' right-bottom' : '') + '">\n\
+                <div class="loading"></div>\n\
+            </div>');
+
+    $('#' + container_id).show(0, function () {
+
+        if ($(this).children('.profilepopup').is(':offscreen')) {
+            $(this).children('.profilepopup').addClass('left');
+        }
+
+        if ($(this).children('.profilepopup').is(':offscreenHeight')) {
+            $(this).children('.profilepopup').addClass('left-bottom');
+        }
+
+        if ($(this).children('.profilepopup').is(':offscreenWidthLeft')) {
+            $(this).children('.profilepopup').addClass('right-bottom');
+        }
+
+        $.ajax({
+            url: url,
+            dataType: 'html',
+            type: 'GET'
+        }).success(function (data) {
+
+            $('#' + container_id).html(data);
+
+            if ($('#' + container_id).children('.profilepopup').is(':offscreen')) {
+                $('#' + container_id).children('.profilepopup').addClass('left');
+            }
+            if ($('#' + container_id).children('.profilepopup').is(':offscreenHeight')) {
+                $('#' + container_id).children('.profilepopup').addClass('left-bottom');
+            }
+            if ($('#' + container_id).children('.profilepopup').is(':offscreenWidthLeft')) {
+                $('#' + container_id).children('.profilepopup').addClass('right-bottom');
+            }
+            
+            setTimeout(function() {
+                $('#' + container_id).find('.loading').hide();
+                $('#' + container_id).find('.grid').removeClass('profilepopup-new-hide');
+            }, 200);
+        }).error(function () {
+            console.error('BÅ‚Ä…d przy pobieraniu danych');
+        });
+    });
+}
+
+function popunder(url, cap, wait) {
+    if (/Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor) === true) {
+        return false;
+    }
+    return jsPopunder(url, {
+        name: 'popunder',
+        width: window.innerWidth,
+        height: window.innerHeight,
+        top: 0,
+        left: 0,
+        wait: wait,
+        cap: '' + cap,
+        cookie: 'popunder_' + url
+    });
+
+}
+
+/*
+ js-popunder
+ pure javascript function for creating pop-under windows
+ https://github.com/tuki/js-popunder
+ */
+function jsPopunder(sUrl, sConfig) {
+
+    var _parent = (top != self && typeof (top.document.location.toString()) === 'string') ? top : self;
+    var popunder = null;
+
+    sConfig = (sConfig || {});
+
+    var sName = (sConfig.name || Math.floor((Math.random() * 1000) + 1));
+    var sWidth = (sConfig.width || window.outerWidth || window.innerWidth);
+    var sHeight = (sConfig.height || (window.outerHeight - 100) || window.innerHeight);
+
+    var sPosX = (typeof (sConfig.left) != 'undefined') ? sConfig.left.toString() : window.screenX;
+    var sPosY = (typeof (sConfig.top) != 'undefined') ? sConfig.top.toString() : window.screenY;
+
+    /* capping */
+    var sWait = (sConfig.wait || 3600);
+    sWait = (sWait * 1000);
+    var sCap = (sConfig.cap || 2);
+
+    /* cookie stuff */
+    var popsToday = 0;
+    var cookie = (sConfig.cookie || '__.popunder');
+
+    var browser = function () {
+        var n = navigator.userAgent.toLowerCase();
+        var b = {
+            webkit: /webkit/.test(n),
+            mozilla: (/mozilla/.test(n)) && (!/(compatible|webkit)/.test(n)),
+            chrome: /chrome/.test(n),
+            msie: (/msie/.test(n)) && (!/opera/.test(n)),
+            firefox: /firefox/.test(n),
+            safari: (/safari/.test(n) && !(/chrome/.test(n))),
+            opera: /opera/.test(n)
+        };
+        b.version = (b.safari) ? (n.match(/.+(?:ri)[\/: ]([\d.]+)/) || [])[1] : (n.match(/.+(?:ox|me|ra|ie)[\/: ]([\d.]+)/) || [])[1];
+        return b;
+    }();
+
+
+    function isCapped() {
+        try {
+            popsToday = Math.floor(document.cookie.split(cookie + 'Cap=')[1].split(';')[0]);
+        } catch (err) {
+        }
+        return (sCap <= popsToday || document.cookie.indexOf(cookie + '=') !== -1);
+    }
+
+
+    function doPopunder(sUrl, sName, sWidth, sHeight, sPosX, sPosY) {
+        if (isCapped())
+            return;
+
+        var listenerEvent = function () {
+            if (isCapped())
+                return;
+
+            popunder = _parent.window.open(sUrl);
+            if (popunder) {
+                // cookie
+                var now = new Date();
+                var next = new Date(now.setTime(now.getTime() + sWait));
+                document.cookie = cookie + '=1;expires=' + next.toGMTString() + ';path=/';
+                var tomorrow = new Date();
+                tomorrow.setHours(24, 0, 0, 0);
+                document.cookie = cookie + 'Cap=' + (popsToday + 1) + ';expires=' + tomorrow.toGMTString() + ';path=/';
+            }
+        };
+
+        // trigger on document.click
+        if (document.addEventListener) {
+            document.addEventListener("click", listenerEvent, false);
+        } else {
+            document.attachEvent("onclick", listenerEvent);
+        }
+    }
+
+    // abort?
+    if (isCapped()) {
+        return false;
+    } else {
+        doPopunder(sUrl, sName, sWidth, sHeight, sPosX, sPosY);
+        return true;
+    }
+}
+
+function showPopup(score_id) {
+
+    var events_box = $('<div id="events_box"></div>');
+    events_box.addClass('events_box');
+    events_box.addClass('loading');
+
+    $('#' + score_id).append(events_box);
+
+    var match_id = score_id.replace('score_', '');
+
+    $.ajax({
+        url: '/soccer/match/events?id=' + match_id,
+        dataType: 'html'
+    }).success(function (data) {
+        events_box.removeClass('loading');
+        events_box.html(data);
+    }).error(function () {
+        console.error('BÅ‚Ä…d przy pobieraniu danych');
+    });
+}
+
+String.prototype.repeat = function (num)
+{
+    return new Array(num + 1).join(this);
+}
+
+/*
+ * Plugins 
+ *   
+ */
+jQuery(function ($) {
+
+    var _oldShow = $.fn.show;
+
+    $.fn.show = function (speed, oldCallback) {
+        return $(this).each(function () {
+            var obj = $(this),
+                    newCallback = function () {
+                        if ($.isFunction(oldCallback)) {
+                            oldCallback.apply(obj);
+                        }
+                        obj.trigger('afterShow');
+                    };
+
+            obj.trigger('beforeShow');
+            _oldShow.apply(obj, [speed, newCallback]);
+        });
+    };
+
+});
+
+/*
+ // returns all elements that are offscreen
+ $(':offscreen');
+ 
+ // boolean returned if element is offscreen
+ $('div').is(':offscreen');
+ */
+jQuery.expr.filters.offscreen = function (el) {
+    var offset = $(el).offset();
+    var posY = offset.top - $(window).scrollTop() + $(el).height();
+    var posX = offset.left - $(window).scrollLeft() + $(el).width();
+
+    return posX > $(window).width() || posY > $(window).height();
+};
+jQuery.expr.filters.offscreenWidth = function (el) {
+    var offset = $(el).offset();
+    var posX = offset.left - $(window).scrollLeft() + $(el).width();
+
+    return posX > $(window).width();
+};
+jQuery.expr.filters.offscreenWidthLeft = function (el) {
+    var offset = $(el).offset();
+    var posX = offset.left - $(window).scrollLeft();
+
+    return posX < 0;
+};
+jQuery.expr.filters.offscreenHeight = function (el) {
+    var offset = $(el).offset();
+    var posY = offset.top - $(window).scrollTop() + $(el).height();
+
+    return posY > $(window).height();
+};
+
+$('.flash_info2 .popup2 .close').click(function(){
+    $('.flash_info2').hide();
+});
+
+$('.tip').each(function (i, e) {
+    var pos = $(e).data('pos');
+
+    $(e).qtip({
+        style: {
+            classes: 'qtip-light qtip-shadow'
+        },
+        position: pos ? pos : {
+            my: 'top left',
+            at: 'bottom right'
+        }
+    })
+});
+
+$('.share').click(function (event) {
+    var name = $(this).data('name');
+    var link = $(this).data('link');
+    var picture = $(this).data('picture');
+    FB.ui({
+        method: 'feed',
+        link: link,
+        name: name,
+        picture: picture,
+        caption: 'meczyki.pl'
+    }, function (response) {
+    });
+    event.preventDefault();
+});
+
+dot();‘b‡w…Ò      X½iX½h=ƒ	¨Xäõ   6    :http://www.meczyki.pl/v/b1079as/js/before_on_ready.js necko:classified 1 strongly-framed 1 request-method GET response-head HTTP/1.1 200 OK
+Server: nginx/1.10.3
+Date: Mon, 06 Mar 2017 13:45:48 GMT
+Content-Type: application/javascript; charset=utf-8
+Content-Length: 16898
+Last-Modified: Mon, 11 Jul 2016 09:46:27 GMT
+Etag: "57836af3-4202"
+Expires: Wed, 05 Apr 2017 13:45:48 GMT
+Cache-Control: max-age=2592000
+Accept-Ranges: bytes
+ original-response-headers Server: nginx/1.10.3
+Date: Mon, 06 Mar 2017 13:45:48 GMT
+Content-Type: application/javascript; charset=utf-8
+Content-Length: 16898
+Last-Modified: Mon, 11 Jul 2016 09:46:27 GMT
+Connection: close
+Etag: "57836af3-4202"
+Expires: Wed, 05 Apr 2017 13:45:48 GMT
+Cache-Control: max-age=2592000
+Accept-Ranges: bytes
+ uncompressed-len 0   B

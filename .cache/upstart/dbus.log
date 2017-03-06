@@ -1,0 +1,6 @@
+Activating service name='org.gnome.GConf'
+Successfully activated service 'org.gnome.GConf'
+Activating service name='ca.desrt.dconf'
+Successfully activated service 'ca.desrt.dconf'
+Activating service name='org.gtk.vfs.Metadata'
+Successfully activated service 'org.gtk.vfs.Metadata'

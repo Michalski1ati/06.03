@@ -1,0 +1,21 @@
+1488807935855	addons.xpi	WARN	Bootstrap state is invalid (missing add-ons: /home/rafal/.mozilla/firefox/mwad0hks.default/extensions/firefox-hotfix@mozilla.org.xpi)
+1488807936960	addons.xpi	WARN	Add-on langpack-en-ZA@firefox.mozilla.org is not compatible with application version.
+1488807936963	addons.xpi	WARN	Add-on langpack-en-GB@firefox.mozilla.org is not compatible with application version.
+1488807936989	addons.xpi	WARN	Add-on langpack-en-ZA@firefox.mozilla.org is not compatible with application version.
+1488807936991	addons.xpi	WARN	Add-on langpack-en-GB@firefox.mozilla.org is not compatible with application version.
+
+(firefox:3169): Gtk-CRITICAL **: gtk_clipboard_set_with_data: assertion 'targets != NULL' failed
+1488808830008	addons.xpi	WARN	Add-on langpack-en-ZA@firefox.mozilla.org is not compatible with application version.
+1488808830013	addons.xpi	WARN	Add-on langpack-en-GB@firefox.mozilla.org is not compatible with application version.
+1488808830944	addons.update-checker	WARN	Update manifest for firefox@getpocket.com did not contain an updates property
+1488808830957	addons.update-checker	WARN	Update manifest for webcompat@mozilla.org did not contain an updates property
+1488808830969	addons.update-checker	WARN	Update manifest for e10srollout@mozilla.org did not contain an updates property
+1488808830983	addons.update-checker	WARN	Update manifest for aushelper@mozilla.org did not contain an updates property
+1488808831145	addons.update-checker	WARN	Update manifest for {972ce4c6-7e08-4474-a285-3208198ce6fd} did not contain an updates property
+1488808949476	addons.xpi	WARN	Add-on langpack-en-ZA@firefox.mozilla.org is not compatible with application version.
+1488808949481	addons.xpi	WARN	Add-on langpack-en-GB@firefox.mozilla.org is not compatible with application version.
+xfce4-whiskermenu-plugin: Unable to get keyboard and mouse grab. Menu popup failed.
+1488809067086	addons.xpi	WARN	Add-on langpack-en-ZA@firefox.mozilla.org is not compatible with application version.
+1488809067088	addons.xpi	WARN	Add-on langpack-en-GB@firefox.mozilla.org is not compatible with application version.
+bash: nie można ustawić grupy procesów terminala (-1): Niewłaściwy ioctl dla urządzenia
+bash: w tej powłoce nie ma kontroli zadań

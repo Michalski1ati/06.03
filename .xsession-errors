@@ -1,0 +1,4 @@
+initctl: Nie można połączyć się z usługą Upstart: Failed to connect to socket /com/ubuntu/upstart: Połączenie odrzucone
+syndaemon: nie znaleziono żadnego procesu
+/etc/mdm/Xsession: Beginning session setup...
+localuser:rafal being added to access control list
